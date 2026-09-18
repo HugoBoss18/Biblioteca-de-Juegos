@@ -13,8 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -27,19 +25,19 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImage
 import com.atom.bibliotecajuegos.ui.theme.BibliotecaJuegosTheme
 
 class MainActivity : ComponentActivity() {
@@ -56,7 +54,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-//Pantalla pricnipal
+// Modelo reutilizable para cualquier lista de juegos
+data class Juego(val nombre: String, val imagenUrl: String)
+
+//Pantalla principal
 @Preview(showBackground = true)
 @Composable
 fun Screen() {
@@ -65,6 +66,7 @@ fun Screen() {
             .fillMaxSize()
             .background(Color(0xFF121212))
             .padding(16.dp)
+            .verticalScroll(rememberScrollState())   // ← esta línea es la clave
     ) {
         TituloPrincipal("BIBLIOTECA DE JUEGOS")
 
@@ -76,12 +78,12 @@ fun Screen() {
         SpacerMediano()
 
         TituloSeccion("Jugando Actualmente")
-        // Jugando()
+        Jugando()
 
         SpacerMediano()
 
         TituloSeccion("Pendientes de Jugar")
-        // Pendientes()
+        Pendientes()
     }
 }
 
@@ -90,23 +92,65 @@ fun Screen() {
 //FAVORITOS
 @Composable
 fun Favoritos() {
-    data class Juego(val nombre: String, val imagenUrl: String)
-
     val juegos = listOf(
         Juego(
-            "DMC: Devil May Cry 5",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/601150/header.jpg"
+            "Batman: Arkham Knight",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/208650/header.jpg"
         ),
         Juego(
-            "Batman Arkham Asylum",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/35140/header.jpg"
+            "Call of Duty: Black Ops 3",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/311210/header.jpg"
         ),
         Juego(
-            "Detroit Become Human",
+            "Detroit: Become Human",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1222140/header.jpg"
         )
     )
 
+    ListaJuegos(juegos)
+}
+
+//JUGANDO
+@Composable
+fun Jugando() {
+    val juegos = listOf(
+        Juego(
+            "Devil May Cry 5",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/601150/header.jpg"
+        ),
+        Juego(
+            "Tekken 8",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1778820/header.jpg"
+        ),
+        Juego(
+            "Mortal Kombat 1",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1971870/header.jpg"
+        )
+    )
+
+    ListaJuegos(juegos)
+}
+
+//PENDIENTES
+@Composable
+fun Pendientes() {
+    val juegos = listOf(
+        Juego(
+            "Batman: Arkham Origins",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/209000/header.jpg"
+        ),
+        Juego(
+            "Street Fighter \n6",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1364780/header.jpg"
+        )
+    )
+
+    ListaJuegos(juegos)
+}
+
+// Fila reutilizable para cualquier lista de juegos
+@Composable
+fun ListaJuegos(juegos: List<Juego>) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -118,13 +162,8 @@ fun Favoritos() {
         }
     }
 }
-//JUGANDO
 
-//PENDIENTES
-
-
-
-//Tarjeta de cada juegos
+//Tarjeta de cada juego
 @Composable
 fun TarjetaJuego(
     nombre: String,
@@ -186,7 +225,7 @@ fun TarjetaJuego(
             Spacer(modifier = Modifier.width(8.dp))
 
             Button(onClick = {
-                if (calificacion < 10){
+                if (calificacion < 10) {
                     calificacion++
                 }
             }) {
