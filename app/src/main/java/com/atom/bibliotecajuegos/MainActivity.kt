@@ -4,40 +4,46 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.ui.res.painterResource
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import coil.compose.AsyncImage
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.atom.bibliotecajuegos.ui.theme.BibliotecaJuegosTheme
 
 class MainActivity : ComponentActivity() {
@@ -47,49 +53,69 @@ class MainActivity : ComponentActivity() {
         setContent {
             BibliotecaJuegosTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Screen()
+                    Screen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
 
-// Modelo reutilizable para cualquier lista de juegos
+// Modelo de datos de un juego
 data class Juego(val nombre: String, val imagenUrl: String)
 
-//Pantalla principal
+// ---------- Pantalla principal ----------
 @Preview(showBackground = true)
 @Composable
-fun Screen() {
-    Column(
-        modifier = Modifier
+fun Screen(modifier: Modifier = Modifier) {
+    LazyColumn(
+        modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF121212))
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())   // ← esta línea es la clave
+            .background(Color(0xFF121212)),
+        contentPadding = PaddingValues(16.dp)
     ) {
-        TituloPrincipal("BIBLIOTECA DE JUEGOS")
+        item {
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                TituloPrincipal("BIBLIOTECA DE JUEGOS")
+                SpacerMediano()
+                Image(
+                    painter = painterResource(id = R.drawable.ic_control),
+                    contentDescription = "Logo",
+                    colorFilter = ColorFilter.tint(Color.White),
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
 
-        SpacerMediano()
+        item {
+            Column {
+                TituloSeccion("Favoritos")
+                Favoritos()
+                SpacerMediano()
+            }
+        }
 
-        TituloSeccion("Favoritos")
-        Favoritos()
+        item {
+            Column {
+                TituloSeccion("Jugando Actualmente")
+                Jugando()
+                SpacerMediano()
+            }
+        }
 
-        SpacerMediano()
-
-        TituloSeccion("Jugando Actualmente")
-        Jugando()
-
-        SpacerMediano()
-
-        TituloSeccion("Pendientes de Jugar")
-        Pendientes()
+        item {
+            Column {
+                TituloSeccion("Pendientes de Jugar")
+                Pendientes()
+            }
+        }
     }
 }
 
-///Funciones para estados de los juegos
+// ---------- Secciones (cada una arma su propio LazyRow con TarjetaJuego) ----------
 
-//FAVORITOS
+// FAVORITOS
 @Composable
 fun Favoritos() {
     val juegos = listOf(
@@ -107,10 +133,14 @@ fun Favoritos() {
         )
     )
 
-    ListaJuegos(juegos)
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        items(juegos) { juego ->
+            TarjetaJuego(nombre = juego.nombre, imagenUrl = juego.imagenUrl)
+        }
+    }
 }
 
-//JUGANDO
+// JUGANDO
 @Composable
 fun Jugando() {
     val juegos = listOf(
@@ -128,10 +158,14 @@ fun Jugando() {
         )
     )
 
-    ListaJuegos(juegos)
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        items(juegos) { juego ->
+            TarjetaJuego(nombre = juego.nombre, imagenUrl = juego.imagenUrl)
+        }
+    }
 }
 
-//PENDIENTES
+// PENDIENTES
 @Composable
 fun Pendientes() {
     val juegos = listOf(
@@ -140,30 +174,19 @@ fun Pendientes() {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/209000/header.jpg"
         ),
         Juego(
-            "Street Fighter \n6",
+            "Street Fighter 6",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1364780/header.jpg"
         )
     )
 
-    ListaJuegos(juegos)
-}
-
-// Fila reutilizable para cualquier lista de juegos
-@Composable
-fun ListaJuegos(juegos: List<Juego>) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         items(juegos) { juego ->
-            TarjetaJuego(
-                nombre = juego.nombre,
-                imagenUrl = juego.imagenUrl
-            )
+            TarjetaJuego(nombre = juego.nombre, imagenUrl = juego.imagenUrl)
         }
     }
 }
 
-//Tarjeta de cada juego
+// ---------- Tarjeta de cada juego ----------
 @Composable
 fun TarjetaJuego(
     nombre: String,
@@ -212,9 +235,7 @@ fun TarjetaJuego(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(onClick = {
-                if (calificacion > 0) {
-                    calificacion--
-                }
+                if (calificacion > 0) calificacion--
             }) {
                 Icon(
                     imageVector = Icons.Default.Remove,
@@ -225,9 +246,7 @@ fun TarjetaJuego(
             Spacer(modifier = Modifier.width(8.dp))
 
             Button(onClick = {
-                if (calificacion < 10) {
-                    calificacion++
-                }
+                if (calificacion < 10) calificacion++
             }) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -237,3 +256,4 @@ fun TarjetaJuego(
         }
     }
 }
+
