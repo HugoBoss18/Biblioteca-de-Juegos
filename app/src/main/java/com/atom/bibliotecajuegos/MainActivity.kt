@@ -11,19 +11,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -60,9 +60,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Modelo de datos de un juego
-data class Juego(val nombre: String, val imagenUrl: String)
-
 // ---------- Pantalla principal ----------
 @Preview(showBackground = true)
 @Composable
@@ -74,17 +71,19 @@ fun Screen(modifier: Modifier = Modifier) {
         contentPadding = PaddingValues(16.dp)
     ) {
         item {
-            Column (
+            Column(
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 TituloPrincipal("BIBLIOTECA DE JUEGOS")
-                SpacerMediano()
+                SpacerPequeño()
                 Image(
                     painter = painterResource(id = R.drawable.ic_control),
                     contentDescription = "Logo",
                     colorFilter = ColorFilter.tint(Color.White),
                     modifier = Modifier.size(32.dp)
                 )
+                SpacerMediano()
             }
         }
 
@@ -113,29 +112,29 @@ fun Screen(modifier: Modifier = Modifier) {
     }
 }
 
-// ---------- Secciones (cada una arma su propio LazyRow con TarjetaJuego) ----------
+//Secciones
 
-// FAVORITOS
+//FAVORITOS
 @Composable
 fun Favoritos() {
-    val juegos = listOf(
-        Juego(
-            "Batman: Arkham Knight",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/208650/header.jpg"
-        ),
-        Juego(
-            "Call of Duty: Black Ops 3",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/311210/header.jpg"
-        ),
-        Juego(
-            "Detroit: Become Human",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1222140/header.jpg"
-        )
-    )
-
     LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        items(juegos) { juego ->
-            TarjetaJuego(nombre = juego.nombre, imagenUrl = juego.imagenUrl)
+        item {
+            TarjetaJuego(
+                nombre = "Batman: Arkham Knight",
+                imagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/208650/header.jpg"
+            )
+        }
+        item {
+            TarjetaJuego(
+                nombre = "Call of Duty: Black Ops 3",
+                imagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/311210/header.jpg"
+            )
+        }
+        item {
+            TarjetaJuego(
+                nombre = "Detroit: Become Human",
+                imagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1222140/header.jpg"
+            )
         }
     }
 }
@@ -143,24 +142,24 @@ fun Favoritos() {
 // JUGANDO
 @Composable
 fun Jugando() {
-    val juegos = listOf(
-        Juego(
-            "Devil May Cry 5",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/601150/header.jpg"
-        ),
-        Juego(
-            "Tekken 8",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1778820/header.jpg"
-        ),
-        Juego(
-            "Mortal Kombat 1",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1971870/header.jpg"
-        )
-    )
-
     LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        items(juegos) { juego ->
-            TarjetaJuego(nombre = juego.nombre, imagenUrl = juego.imagenUrl)
+        item {
+            TarjetaJuego(
+                nombre = "Devil May Cry 5",
+                imagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/601150/header.jpg"
+            )
+        }
+        item {
+            TarjetaJuego(
+                nombre = "Tekken 8",
+                imagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1778820/header.jpg"
+            )
+        }
+        item {
+            TarjetaJuego(
+                nombre = "Mortal Kombat 1",
+                imagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1971870/header.jpg"
+            )
         }
     }
 }
@@ -168,30 +167,25 @@ fun Jugando() {
 // PENDIENTES
 @Composable
 fun Pendientes() {
-    val juegos = listOf(
-        Juego(
-            "Batman: Arkham Origins",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/209000/header.jpg"
-        ),
-        Juego(
-            "Street Fighter 6",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1364780/header.jpg"
-        )
-    )
-
     LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        items(juegos) { juego ->
-            TarjetaJuego(nombre = juego.nombre, imagenUrl = juego.imagenUrl)
+        item {
+            TarjetaJuego(
+                nombre = "Batman: Arkham Origins",
+                imagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/209000/header.jpg"
+            )
+        }
+        item {
+            TarjetaJuego(
+                nombre = "Street Fighter \n6",
+                imagenUrl = "https://cdn.cloudflare.steamstatic.com/steam/apps/1364780/header.jpg"
+            )
         }
     }
 }
 
-// ---------- Tarjeta de cada juego ----------
+//Plantilla de las tarjetas de juego
 @Composable
-fun TarjetaJuego(
-    nombre: String,
-    imagenUrl: String
-) {
+fun TarjetaJuego(nombre: String, imagenUrl: String) {
     var calificacion by remember { mutableStateOf(5) }
 
     Column(
@@ -208,10 +202,10 @@ fun TarjetaJuego(
         AsyncImage(
             model = imagenUrl,
             contentDescription = nombre,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Fit,
             modifier = Modifier
-                .width(140.dp)
-                .height(180.dp)
+                .fillMaxWidth()
+                .aspectRatio(460f / 215f)
         )
 
         SpacerPequeño()
